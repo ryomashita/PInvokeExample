@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/csharp,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp,c++
 
+# User-specific files
+build/
+
 ### C++ ###
 # Prerequisites
 *.d
