@@ -22,12 +22,59 @@
   - アンマネージドライブラリ内の構造体、コールバック、関数を、マネージドコードから呼び出すための技術。
   - [プラットフォーム呼び出し (P/Invoke) (Microsoft Learn)](https://learn.microsoft.com/ja-jp/dotnet/standard/native-interop/pinvoke)
 - マーシャリング: マネージドコードとアンマネージドコードの間で型を変換するプロセス。
+  - マネージド/アンマネージド間でデータを受け渡しする際は、マーシャリングが発生する。値をコピーするコストが発生する。
   - `bool` を何バイトで表現するか、配列のサイズ、文字列のエンコーディングなどを、マネージドコード上で明示する必要がある。
+- Blittable: マネージド型とアンマネージド型の間で、マーシャリング無しにデータを転送できる型。
+  - マネージド型がアンマネージド型と同じメモリレイアウトを持つ場合、Blittable として扱われる。
 
-## ネイティブライブラリの読み込み
+## DLL 探索パスの解決
 
 https://learn.microsoft.com/ja-jp/dotnet/standard/native-interop/native-library-loading
 
+## 関連クラス
+
+### `StructLayoutAttribute`
+
+マネージドメモリ内の class, struct の物理レイアウトを制御するための attribute。
+
+#### `LayoutKind`
+
+メンバーがどのようにレイアウトされるかを指定する。
+
+```csharp
+// Sequential: 宣言された順序で配置する。
+// オフセットは `Pack` と併せて確定する。
+[StructLayout(LayoutKind.Sequential)]
+public struct Point
+{
+   public int x;
+   public int y;
+}
+
+// Explicit: 各メンバーのオフセットを `FieldOffset` で指定する。
+[StructLayout(LayoutKind.Explicit)]
+public struct Rect
+{
+   [FieldOffset(0)] public int left;
+   [FieldOffset(4)] public int top;
+   [FieldOffset(8)] public int right;
+   [FieldOffset(12)] public int bottom;
+}
+
+// Auto (default): ランタイムが最適な配置方法を選択する。
+// アンマネージドに公開不可。
+[StructLayout(LayoutKind.Auto)]
+```
+
+- `CharSet`: 文字列のエンコーディングを指定する。
+  - `LPWSTR`: Unicode 文字列
+  - `LPSTR`: ANSI 文字列
+- `Pack`: フィールドのアライメントを指定する。
+  - 0 または 2 のべき乗で指定する。 (1 ~ 128)
+  - 0: デフォルトのアライメントを使用する。
+  - 1~128: 型のサイズまたは指定された値でアライメントする。
+- `Size`: 構造体の最小サイズを指定する。
+  - ※ 指定できるのは最小サイズだけで、実際のサイズを完全に制御するわけではない。
 
 ## サンプル
 
