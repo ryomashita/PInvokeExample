@@ -1,11 +1,23 @@
-#include "../include/hoge.h"
+#include "hoge.h"
 
-void WINAPI HogeFunction(Hoge* hoge)
+namespace {
+    Hoge storagedHoge;
+}
+
+void WINAPI StoreHogeToCpp(const Hoge* hoge)
 {
-    // 構造体のフィールドに値を設定
-    hoge->byteValue = 123;
-    hoge->shortValue = 12345;
-    hoge->intValue = 1234567890;
-    hoge->longValue = 1234567890123456789LL;
-    hoge->boolValue = true;
+    storagedHoge.byteValue = hoge->byteValue;
+    storagedHoge.shortValue = hoge->shortValue;
+    storagedHoge.intValue = hoge->intValue;
+    storagedHoge.longValue = hoge->longValue;
+    storagedHoge.boolValue = hoge->boolValue;
+}
+
+void WINAPI LoadHogeFromCpp(Hoge* hoge)
+{
+    hoge->byteValue = storagedHoge.byteValue;
+    hoge->shortValue = storagedHoge.shortValue;
+    hoge->intValue = storagedHoge.intValue;
+    hoge->longValue = storagedHoge.longValue;
+    hoge->boolValue = storagedHoge.boolValue;
 }
